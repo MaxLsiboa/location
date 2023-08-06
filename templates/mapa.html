@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mapa de Tráfego em Tempo Real</title>
+  <style>
+    /* Defina a altura do mapa para que ele ocupe a maior parte da tela */
+    #mapa {
+      height: 500px;
+      width: 100%;
+    }
+    /* Estilo para centralizar o título e definir a cor da fonte */
+    h1 {
+      text-align: center;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    /* Estilo para o botão "Obter minha localização" */
+    #getLocationBtn {
+      display: block;
+      margin: 10px auto;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    /* Estilo para o corpo da página com uma imagem de fundo */
+    body {
+      background-image: url('https://i0.wp.com/www.mapasmundi.com.br/wp-content/uploads/2015/12/Mapa_Mundi_Papel_de_Parede_Adesivo_25.jpg?ssl=1'); /* Substitua pelo caminho da sua imagem de fundo */
+      background-repeat: repeat; /* Defina a repetição da imagem de fundo como 'repeat' */
+    }
+    /* Estilo para o favicon */
+     <link rel="icon" type="image/x-icon" href="https://th.bing.com/th/id/R.09fa70b860198751bc77bfcf77728530?rik=W7gNPYnBwdkEYg&riu=http%3a%2f%2fclipart-library.com%2fimages_k%2fglobe-png-transparent%2fglobe-png-transparent-14.png&ehk=cKeey54E8TTWBS5WFZy2TeblQK5zzj28q512gg%2f%2b%2fCs%3d&risl=&pid=ImgRaw&r=0">
+    }
+  </style>
+  <!-- Inclua o arquivo CSS do Azure Maps -->
+  <link rel="stylesheet" href="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.css" type="text/css" />
+</head>
+<body>
+  <h1>Mapa de Tráfego em Tempo Real</h1>
+  <div id="mapa"></div>
+  <button id="getLocationBtn">Obter minha localização</button>
+
+  <!-- Inclua o arquivo JavaScript do Azure Maps -->
+  <script src="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.js"></script>
+  <script>
+    // Substitua 'SUA_CHAVE_DE_ASSINATURA' pela sua chave de assinatura do Azure Maps
+    var azureMapsKey = 'ogO3LN0D67EJ9Xf783lDZ82GcPQDgA4NXWM3MUBHI18';
+
+    function initMap() {
+      // Crie o mapa e defina o centro e o nível de zoom com base na localização do dispositivo
+      var map = new atlas.Map('mapa', {
+        center: [-34.397, 150.644], // Coordenadas iniciais do centro do mapa
+        zoom: 8, // Nível de zoom do mapa
+        authOptions: {
+          // Use a chave de assinatura do Azure Maps para autenticação
+          authType: 'subscriptionKey',
+          subscriptionKey: azureMapsKey
+        }
+      });
+
+      // Função para adicionar um marcador no mapa com base na localização do dispositivo
+      function addMarkerWithLocation(position) {
+        var deviceLatLng = [position.coords.latitude, position.coords.longitude];
+
+        // Exemplo: exibir um marcador no mapa para mostrar a localização do dispositivo
+        var marker = new atlas.HtmlMarker({
+          position: deviceLatLng,
+          htmlContent: '<div style="width: 20px; height: 20px; background-color: blue; border-radius: 50%;"></div>'
+        });
+
+        map.markers.clear();
+        map.markers.add(marker);
+
+        // Atualizar o mapa a cada 1 minuto (60000 milissegundos)
+        updateTraffic(deviceLatLng);
+        setInterval(function () {
+          updateTraffic(deviceLatLng);
+        }, 60000);
+      }
+
+      // Função para obter a localização do dispositivo
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(addMarkerWithLocation);
+        } else {
+          console.error('Geolocalização não suportada pelo navegador.');
+        }
+      }
+
+      // Adicionar evento de clique ao botão "Obter minha localização"
+      var getLocationBtn = document.getElementById('getLocationBtn');
+      getLocationBtn.addEventListener('click', getLocation);
+    }
+
+    // Função para obter dados de tráfego em tempo real do Azure Maps
+    function getTrafficData(latitude, longitude) {
+      var url = `https://atlas.microsoft.com/traffic/flow/segment/json?api-version=1.0&subscription-key=${azureMapsKey}&format=json&query=${latitude},${longitude}`;
+      return fetch(url)
+        .then(response => response.json());
+    }
+
+    // Função para atualizar os dados de tráfego e exibir informações no mapa
+    function updateTraffic(deviceLatLng) {
+      getTrafficData(deviceLatLng[0], deviceLatLng[1])
+        .then(data => {
+          // Processar os dados e exibir informações no mapa (você pode implementar essa parte conforme necessário)
+          console.log('Dados de tráfego em tempo real:', data);
+        })
+        .catch(error => {
+          console.error('Erro ao obter informações de tráfego em tempo real:', error);
+        });
+    }
+
+    // Chamar a função initMap quando a página for carregada
+    document.addEventListener('DOMContentLoaded', initMap);
+  </script>
+</body>
+</html>
