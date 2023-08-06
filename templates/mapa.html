@@ -52,7 +52,7 @@
     function initMap() {
       // Crie o mapa e defina o centro e o nível de zoom com base na localização do dispositivo
       var map = new atlas.Map('mapa', {
-        center: [-34.397, 150.644], // Coordenadas iniciais do centro do mapa
+        center: [], // Coordenadas iniciais do centro do mapa
         zoom: 8, // Nível de zoom do mapa
         authOptions: {
           // Use a chave de assinatura do Azure Maps para autenticação
@@ -74,11 +74,11 @@
         map.markers.clear();
         map.markers.add(marker);
 
-        // Atualizar o mapa a cada 1 minuto (60000 milissegundos)
+        // Atualizar o mapa a cada 0,10 seg (10000 milissegundos)
         updateTraffic(deviceLatLng);
         setInterval(function () {
           updateTraffic(deviceLatLng);
-        }, 60000);
+        }, 10000);
       }
 
       // Função para obter a localização do dispositivo
