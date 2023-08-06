@@ -32,7 +32,9 @@
       background-repeat: repeat; /* Defina a repetição da imagem de fundo como 'repeat' */
     }
     /* Estilo para o favicon */
-     <link rel="icon" type="image/x-icon" href="https://th.bing.com/th/id/R.09fa70b860198751bc77bfcf77728530?rik=W7gNPYnBwdkEYg&riu=http%3a%2f%2fclipart-library.com%2fimages_k%2fglobe-png-transparent%2fglobe-png-transparent-14.png&ehk=cKeey54E8TTWBS5WFZy2TeblQK5zzj28q512gg%2f%2b%2fCs%3d&risl=&pid=ImgRaw&r=0">
+    link[rel="icon"] {
+      type="image/x-icon"
+      href="https://th.bing.com/th/id/R.09fa70b860198751bc77bfcf77728530?rik=W7gNPYnBwdkEYg&riu=http%3a%2f%2fclipart-library.com%2fimages_k%2fglobe-png-transparent%2fglobe-png-transparent-14.png&ehk=cKeey54E8TTWBS5WFZy2TeblQK5zzj28q512gg%2f%2b%2fCs%3d&risl=&pid=ImgRaw&r=0";
     }
   </style>
   <!-- Inclua o arquivo CSS do Azure Maps -->
@@ -50,10 +52,8 @@
     var azureMapsKey = 'ogO3LN0D67EJ9Xf783lDZ82GcPQDgA4NXWM3MUBHI18';
 
     function initMap() {
-      // Crie o mapa e defina o centro e o nível de zoom com base na localização do dispositivo
+      // Crie o mapa
       var map = new atlas.Map('mapa', {
-        center: [], // Coordenadas iniciais do centro do mapa
-        zoom: 8, // Nível de zoom do mapa
         authOptions: {
           // Use a chave de assinatura do Azure Maps para autenticação
           authType: 'subscriptionKey',
@@ -65,6 +65,9 @@
       function addMarkerWithLocation(position) {
         var deviceLatLng = [position.coords.latitude, position.coords.longitude];
 
+        // Defina o centro do mapa com base na localização do dispositivo
+        map.setCamera({ center: deviceLatLng });
+
         // Exemplo: exibir um marcador no mapa para mostrar a localização do dispositivo
         var marker = new atlas.HtmlMarker({
           position: deviceLatLng,
@@ -74,11 +77,11 @@
         map.markers.clear();
         map.markers.add(marker);
 
-        // Atualizar o mapa a cada 0,10 seg (10000 milissegundos)
+        // Atualizar o mapa a cada 1 minuto (60000 milissegundos)
         updateTraffic(deviceLatLng);
         setInterval(function () {
           updateTraffic(deviceLatLng);
-        }, 10000);
+        }, 60000);
       }
 
       // Função para obter a localização do dispositivo
